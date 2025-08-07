@@ -1,0 +1,66 @@
+﻿<liftui:Window
+    x:Class="XLight.Wpf.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:XLight.Wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="550"
+    Height="580"
+    ResizeMode="CanMinimize"
+    mc:Ignorable="d">
+
+    <liftui:Window.NonClientAreaContent>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="14"
+                FontWeight="Bold"
+                Foreground="#509CFF"
+                Text="SimscopSpin" />
+        </StackPanel>
+    </liftui:Window.NonClientAreaContent>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Grid.Column="0"
+            Margin="2"
+            BorderBrush="White"
+            BorderThickness="1"
+            CornerRadius="8">
+            <StackPanel>
+                <TextBlock
+                    Margin="10,5"
+                    Foreground="White"
+                    Text="CECERO" />
+                <Separator Margin="10,5" Background="White" />
+                <local:CeceroSpinView />
+            </StackPanel>
+        </Border>
+
+        <Border
+            Grid.Column="1"
+            Margin="2"
+            BorderBrush="White"
+            BorderThickness="1"
+            CornerRadius="8">
+            <StackPanel>
+                <TextBlock
+                    Margin="10,5"
+                    Foreground="White"
+                    Text="V2" />
+                <Separator Margin="10,5" Background="White" />
+                <local:V2SpinView />
+            </StackPanel>
+
+
+        </Border>
+
+    </Grid>
+</liftui:Window>

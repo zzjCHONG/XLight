@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLight", "XLight\XLight.csproj", "{C7E248E0-C2F0-421B-9E22-5E7FDC3B022F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLight.Wpf", "XLight.Wpf\XLight.Wpf.csproj", "{14960ECC-BEB7-4522-9FCF-7740389E7DFD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C7E248E0-C2F0-421B-9E22-5E7FDC3B022F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7E248E0-C2F0-421B-9E22-5E7FDC3B022F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7E248E0-C2F0-421B-9E22-5E7FDC3B022F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7E248E0-C2F0-421B-9E22-5E7FDC3B022F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14960ECC-BEB7-4522-9FCF-7740389E7DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14960ECC-BEB7-4522-9FCF-7740389E7DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14960ECC-BEB7-4522-9FCF-7740389E7DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14960ECC-BEB7-4522-9FCF-7740389E7DFD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1A3D1AB-CBD7-431C-AD5B-6327AC13A3EE}
+	EndGlobalSection
+EndGlobal
