@@ -5,12 +5,12 @@ namespace XLight.Wpf
     /// <summary>
     /// CeceroSpinView.xaml 的交互逻辑
     /// </summary>
-    public partial class CeceroSpinView : UserControl
+    public partial class CiceroSpinView : UserControl
     {
-        public CeceroSpinView()
+        public CiceroSpinView()
         {
             InitializeComponent();
-            this.DataContext=new CeceroSpinViewModel();
+            this.DataContext=new CiceroSpinViewModel();
         }
     }
 }

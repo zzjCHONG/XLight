@@ -1,13 +1,13 @@
 ﻿
 namespace XLight
 {
-    public class CeceroCrestSpin : ISpin
+    public class CiceroCrestSpin : ISpin
     {
-        private readonly XLightCecero.XLight _cecero;
+        private readonly XLightCicero.XLight _cecero;
 
-        public CeceroCrestSpin()
+        public CiceroCrestSpin()
         {
-            _cecero=new XLightCecero.XLight();
+            _cecero=new XLightCicero.XLight();
         }
 
         public Task<string> Version 
@@ -21,14 +21,14 @@ namespace XLight
 
         public async Task<bool> SetDisk(uint value)=> await _cecero.SetDisk(value);
 
-        public async Task<bool> SetEmission(uint value) => await _cecero.SetEmission(value);
+        public async Task<bool> SetEmission(uint value, bool isExtraction = false) => await _cecero.SetEmission(value, isExtraction);
 
-        public Task<bool> SetExcitation(uint value)
+        public Task<bool> SetExcitation(uint value, bool isExtraction = false)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> SetDichroic(uint value)
+        public Task<bool> SetDichroic(uint value, bool isExtraction = false)
         {
             throw new NotImplementedException();
         }

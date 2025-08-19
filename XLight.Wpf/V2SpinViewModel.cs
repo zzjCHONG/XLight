@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace XLight.Wpf
 {
-    public partial class V2SpinViewModel: ObservableObject
+    public partial class V2SpinViewModel : ObservableObject
     {
         private readonly ISpin _spin;
         private readonly System.Timers.Timer? _timerComs;
@@ -135,10 +135,39 @@ namespace XLight.Wpf
         [ObservableProperty]
         private bool _isEmissionEnable = true;
 
-        public List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", "6", "7", "8" };
+        public static List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", "6", "7", "8" };
 
         [ObservableProperty]
         private uint _emissionIndex = 0;
+
+        [ObservableProperty]
+        private bool _isEmissionExtraction;
+
+        async partial void OnIsEmissionExtractionChanged(bool value)
+        {
+            if (isHoming) return;
+
+            try
+            {
+                IsEmissionEnable = false;
+                if (!await _spin.SetEmission(EmissionIndex + 1, value))
+                {
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        System.Windows.MessageBox.Show(Application.Current.MainWindow, $"Emission-Extraction切换失败！",
+                            "切换提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("OnIsEmissionExtractionChanged Failed:" + ex.Message);
+            }
+            finally
+            {
+                IsEmissionEnable = true;
+            }
+        }
 
         async partial void OnEmissionIndexChanged(uint value)
         {
@@ -148,7 +177,7 @@ namespace XLight.Wpf
             {
                 IsEmissionEnable = false;
                 var pos = value + 1;
-                if (!await _spin.SetEmission(pos))
+                if (!await _spin.SetEmission(pos, IsEmissionExtraction))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -157,21 +186,20 @@ namespace XLight.Wpf
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("OnEmissionIndexChanged Failed:" + ex.Message);
             }
             finally
             {
                 IsEmissionEnable = true;
             }
-
         }
 
         [ObservableProperty]
-        private bool _isSpiningEnable=true;
+        private bool _isSpiningEnable = true;
 
-        public List<string> SpiningCollection => new() { "0", "1", "2" };
+        public static List<string> SpiningCollection => new() { "0", "1", "2" };
 
         [ObservableProperty]
         private uint _spiningIndex = 0;
@@ -182,6 +210,7 @@ namespace XLight.Wpf
             try
             {
                 IsSpiningEnable = false;
+                IsSetSpinEnable = false;
                 if (!await _spin.SetSpining(value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -191,24 +220,53 @@ namespace XLight.Wpf
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("OnSpiningIndexChanged Failed:" + ex.Message);
             }
             finally
             {
-                IsSpiningEnable=true;
+                IsSpiningEnable = true;
+                IsSetSpinEnable = true;
             }
-
         }
 
         [ObservableProperty]
         private bool _isDichroicEnable = true;
 
-        public List<string> DichroicCollection => new(){"1","2","3","4","5"};
+        public static List<string> DichroicCollection => new() { "1", "2", "3", "4", "5" };
 
         [ObservableProperty]
         private uint _dichroicIndex = 0;
+
+        [ObservableProperty]
+        private bool _isDichroicExtraction;
+
+        async partial void OnIsDichroicExtractionChanged(bool value)
+        {
+            if (isHoming) return;
+
+            try
+            {
+                IsDichroicEnable = false;
+                if (!await _spin.SetDichroic(DichroicIndex+1, value))
+                {
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        System.Windows.MessageBox.Show(Application.Current.MainWindow, $"Dichroic-Extraction切换失败！",
+                            "切换提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("OnIsDichroicExtractionChanged Failed:"+ex.Message);
+            }
+            finally
+            {
+                IsDichroicEnable = true;
+            }
+        }
 
         async partial void OnDichroicIndexChanged(uint value)
         {
@@ -217,7 +275,7 @@ namespace XLight.Wpf
             {
                 IsDichroicEnable = false;
                 var pos = value + 1;
-                if (!await _spin.SetDichroic(pos))
+                if (!await _spin.SetDichroic(pos, IsDichroicExtraction))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -226,10 +284,9 @@ namespace XLight.Wpf
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine("OnDichroicIndexChanged Failed:" + ex.Message);
             }
             finally
             {
@@ -241,10 +298,39 @@ namespace XLight.Wpf
         [ObservableProperty]
         private bool _isExcitationEnable = true;
 
-        public List<string> ExcitationCollection => new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8" };
+        public static List<string> ExcitationCollection => new() { "1", "2", "3", "4", "5", "6", "7", "8" };
 
         [ObservableProperty]
         private uint _excitationIndex = 0;
+
+        [ObservableProperty]
+        private bool _isExcitationExtraction;
+
+        async partial void OnIsExcitationExtractionChanged(bool value)
+        {
+            if (isHoming) return;
+
+            try
+            {
+                IsExcitationEnable = false;
+                if (!await _spin.SetExcitation(ExcitationIndex+1, value))
+                {
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        System.Windows.MessageBox.Show(Application.Current.MainWindow, $"Excitation-Extraction切换失败！",
+                            "切换提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("OnIsExcitationExtractionChanged Failed:" + ex.Message);
+            }
+            finally
+            {
+                IsExcitationEnable = true;
+            }
+        }
 
         async partial void OnExcitationIndexChanged(uint value)
         {
@@ -253,7 +339,7 @@ namespace XLight.Wpf
             {
                 IsExcitationEnable = false;
                 var pos = value + 1;
-                if (!await _spin.SetExcitation(pos))
+                if (!await _spin.SetExcitation(pos, IsExcitationExtraction))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -262,10 +348,9 @@ namespace XLight.Wpf
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine("OnExcitationIndexChanged Failed:" + ex.Message);
             }
             finally
             {
@@ -285,20 +370,24 @@ namespace XLight.Wpf
                 DichroicIndex = 0;
                 EmissionIndex = 0;
                 ExcitationIndex = 0;
+
                 SpiningIndex = 0;
                 IsSetSpin = false;
 
+                IsDichroicExtraction = false;
+                IsEmissionExtraction = false;
+                IsExcitationExtraction = false;
+
                 await _spin.Reset();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("Home Failed:" + ex.Message);
             }
             finally
             {
                 isHoming = false;
             }
-
         }
 
         [ObservableProperty]
@@ -313,19 +402,20 @@ namespace XLight.Wpf
             try
             {
                 IsSetSpinEnable = false;
+                IsSpiningEnable = false;
 
                 await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
 
                 await Task.Delay(1000); //需额外增加转盘稳定延时，待测试确认
-               
-            }
-            catch (Exception)
-            {
 
-                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("SetSpin Failed:" + ex.Message);
             }
             finally
             {
+                IsSpiningEnable = true;
                 IsSetSpinEnable = true;
             }
 

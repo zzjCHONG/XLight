@@ -7,15 +7,15 @@ using System.Windows;
 
 namespace XLight.Wpf
 {
-    public partial class CeceroSpinViewModel: ObservableObject
+    public partial class CiceroSpinViewModel : ObservableObject
     {
         private readonly ISpin _spin;
         private readonly System.Timers.Timer? _timerComs;
         private static string? currentPortname;
 
-        public CeceroSpinViewModel()
+        public CiceroSpinViewModel()
         {
-            _spin = new CeceroCrestSpin();
+            _spin = new CiceroCrestSpin();
 
             SerialComs?.AddRange(SerialPort.GetPortNames());
             if (_timerComs == null)
@@ -129,24 +129,52 @@ namespace XLight.Wpf
 
     }
 
-    partial class CeceroSpinViewModel
+    partial class CiceroSpinViewModel
     {
         [ObservableProperty]
-        private bool _isEmissionEnable;
+        private bool _isEmissionEnable=true;
 
-        public List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", };
+        public static List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", };
 
         [ObservableProperty]
         private uint _emissionIndex = 0;
 
+        [ObservableProperty]
+        private bool _isEmissionExtraction;
+
+        async partial void OnIsEmissionExtractionChanged(bool value)
+        {
+            if (IsHoming) return;
+            try
+            {
+                IsEmissionEnable = false;
+                if (!await _spin.SetEmission(EmissionIndex + 1, IsEmissionExtraction))
+                {
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        System.Windows.MessageBox.Show(Application.Current.MainWindow, $"Emission-Extraction切换失败！",
+                            "切换提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("OnIsEmissionExtractionChanged Failed:" + ex.Message);
+            }
+            finally
+            {
+                IsEmissionEnable = true;
+            }
+        }
+
         async partial void OnEmissionIndexChanged(uint value)
         {
-            if (isHoming) return;
+            if (IsHoming) return;
             try
             {
                 IsEmissionEnable = false;
                 var pos = value + 1;
-                if (!await _spin.SetEmission(pos))
+                if (!await _spin.SetEmission(pos, IsEmissionExtraction))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -155,38 +183,42 @@ namespace XLight.Wpf
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine("OnEmissionIndexChanged Failed:" + ex.Message);
             }
             finally
             {
-                IsEmissionEnable = false;
+                IsEmissionEnable = true;
             }
         }
 
-        private bool isHoming;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsHomingOperable))]
+        private bool _isHoming;
+
+        public bool IsHomingOperable => !IsHoming;
 
         [RelayCommand]
         async Task Home()
         {
             try
             {
-                isHoming = true;
+                IsHoming = true;
 
                 EmissionIndex = 0;
                 IsSetSpin = false;
+                IsEmissionExtraction = false;
 
                 await _spin.Reset();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("Home Failed:" + ex.Message);
             }
             finally
             {
-                isHoming = false;
+                IsHoming = false;
             }
         }
 
@@ -208,10 +240,9 @@ namespace XLight.Wpf
                 await Task.Delay(1000); //需额外增加转盘稳定延时，待测试确认
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine("SetSpin Failed:" + ex.Message);
             }
             finally
             {

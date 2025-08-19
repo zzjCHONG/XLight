@@ -9,7 +9,7 @@ using XLight;
 //    Console.ReadLine();
 //}
 
-CeceroCrestSpin ceceroCrestSpin = new CeceroCrestSpin();
+CiceroCrestSpin ceceroCrestSpin = new CiceroCrestSpin();
 if (ceceroCrestSpin.Init())
 {
     var ver=await ceceroCrestSpin.Version;

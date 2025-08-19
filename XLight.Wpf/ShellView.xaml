@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:XLight.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="550"
-    Height="580"
+    Height="550"
     ResizeMode="CanMinimize"
     mc:Ignorable="d">
 
@@ -38,9 +38,9 @@
                 <TextBlock
                     Margin="10,5"
                     Foreground="White"
-                    Text="CECERO" />
+                    Text="CICERO" />
                 <Separator Margin="10,5" Background="White" />
-                <local:CeceroSpinView />
+                <local:CiceroSpinView />
             </StackPanel>
         </Border>
 

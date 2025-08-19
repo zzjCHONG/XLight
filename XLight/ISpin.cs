@@ -53,7 +53,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<bool> SetDichroic(uint value);
+        public Task<bool> SetDichroic(uint value, bool isExtraction = false);
 
         /// <summary>
         /// Emission FW
@@ -64,7 +64,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<bool> SetEmission(uint value);
+        public Task<bool> SetEmission(uint value, bool isExtraction = false);
 
         /// <summary>
         /// Excitation FW
@@ -75,7 +75,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<bool> SetExcitation(uint value);
+        public Task<bool> SetExcitation(uint value, bool isExtraction = false);
 
         /// <summary>
         /// 多位置设置（ABC，DN不支持）

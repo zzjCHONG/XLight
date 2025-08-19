@@ -1,7 +1,7 @@
 ﻿using System.IO.Ports;
 using System.Text;
 
-namespace XLightCecero
+namespace XLightCicero
 {
     public partial class XLight
     {
@@ -363,14 +363,15 @@ namespace XLightCecero
         /// </summary>
         /// <param name="value">1~8</param>
         /// <returns></returns>
-        public async Task<bool> SetEmission(uint value)
+        public async Task<bool> SetEmission(uint value, bool isExtraction = false)
         {
             try
             {
                 if (value < 1 || value > 5) return false;
 
+                var isExtractionMode = isExtraction ? "m" : "";
                 FlagB = value is >= 1 and <= 5 ? value : 1;
-                var command = $"B{FlagB}";
+                var command = $"B{FlagB}{isExtractionMode}";
                 var (ok, resp) = await SendCommandAsync(command, 10000);
                 if (ok)
                 {
@@ -403,16 +404,10 @@ namespace XLightCecero
 
             // 去掉 CR LF
             response = response.Trim('\r', '\n', ' ');
-
-            //// 检查是否设备不存在
-            //if (response.Length >= 2 && response[1] == '0')
-            //{
-            //    Console.WriteLine($"[ERR] 命令 {command} 返回 {response} → 设备不存在或故障");
-            //    return false;
-            //}
+            var commit = command.Replace("m", "");//使用处理后的command做校验
 
             // 正常应该和命令一致
-            if (string.Equals(command, response, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(commit, response, StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine($"[OK] 命令 {command} 校验通过，返回: {response}");
                 return true;

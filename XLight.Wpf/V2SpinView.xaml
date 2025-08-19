@@ -10,24 +10,36 @@
     d:DesignHeight="500"
     d:DesignWidth="250"
     mc:Ignorable="d">
-    <StackPanel>
-        <UniformGrid
-            Margin="10"
-            Columns="2"
-            IsEnabled="{Binding IsConnected}">
-            <Button
-                Width="100"
-                Height="30"
-                HorizontalAlignment="Stretch"
-                Command="{Binding HomeCommand}"
-                Content="复位" />
 
+    <StackPanel>
+
+        <Button
+            Height="30"
+            Margin="20,0"
+            HorizontalAlignment="Stretch"
+            Command="{Binding HomeCommand}"
+            Content="复位"
+            IsEnabled="{Binding IsConnected}" />
+
+        <UniformGrid Columns="2" IsEnabled="{Binding IsConnected}">
+
+            <GroupBox
+                Height="80"
+                Margin="10"
+                Header=" Spining"
+                IsEnabled="{Binding IsConnected}"
+                Style="{DynamicResource GroupBoxTab}">
+                <ComboBox
+                    IsEnabled="{Binding IsSpiningEnable}"
+                    ItemsSource="{Binding SpiningCollection}"
+                    SelectedIndex="{Binding SpiningIndex}" />
+            </GroupBox>
             <ToggleButton
                 liftui:StatusSwitchElement.HideUncheckedElement="False"
                 Command="{Binding SetSpinCommand}"
                 Focusable="False"
-                IsEnabled="{Binding IsSetSpinEnable}"
                 IsChecked="{Binding IsSetSpin}"
+                IsEnabled="{Binding IsSetSpinEnable}"
                 Style="{DynamicResource ToggleButtonCustom}">
                 <liftui:StatusSwitchElement.CheckedElement>
                     <Border
@@ -55,52 +67,136 @@
                 </Border>
             </ToggleButton>
 
-        </UniformGrid>
-
-        <GroupBox
-            Height="80"
-            Margin="10"
-            Header=" Spining"
-            IsEnabled="{Binding IsConnected}"
-            Style="{DynamicResource GroupBoxTab}">
-            <ComboBox
-                IsEnabled="{Binding IsSpiningEnable}"
-                ItemsSource="{Binding SpiningCollection}"
-                SelectedIndex="{Binding SpiningIndex}" />
-        </GroupBox>
-        <GroupBox
-            Height="80"
-            Margin="10"
-            Header=" Dichroic"
-            IsEnabled="{Binding IsConnected}"
-            Style="{DynamicResource GroupBoxTab}">
-            <ComboBox
+            <GroupBox
+                Height="80"
+                Margin="10"
+                Header=" Dichroic"
+                IsEnabled="{Binding IsConnected}"
+                Style="{DynamicResource GroupBoxTab}">
+                <ComboBox
+                    IsEnabled="{Binding IsDichroicEnable}"
+                    ItemsSource="{Binding DichroicCollection}"
+                    SelectedIndex="{Binding DichroicIndex}" />
+            </GroupBox>
+            <ToggleButton
+                liftui:StatusSwitchElement.HideUncheckedElement="False"
+                Focusable="False"
+                IsChecked="{Binding IsDichroicExtraction}"
                 IsEnabled="{Binding IsDichroicEnable}"
-                ItemsSource="{Binding DichroicCollection}"
-                SelectedIndex="{Binding DichroicIndex}" />
-        </GroupBox>
-        <GroupBox
-            Height="80"
-            Margin="10"
-            Header=" Emission"
-            IsEnabled="{Binding IsConnected}"
-            Style="{DynamicResource GroupBoxTab}">
-            <ComboBox
+                Style="{DynamicResource ToggleButtonCustom}">
+                <liftui:StatusSwitchElement.CheckedElement>
+                    <Border
+                        Background="{DynamicResource PrimaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <Label
+                            Width="100"
+                            Background="Transparent"
+                            Content="Extraction"
+                            Foreground="White" />
+                    </Border>
+                </liftui:StatusSwitchElement.CheckedElement>
+                <Border
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <Label
+                        Width="100"
+                        Background="Transparent"
+                        Content="Extraction"
+                        Foreground="{DynamicResource PrimaryTextBrush}" />
+                </Border>
+            </ToggleButton>
+
+            <GroupBox
+                Height="80"
+                Margin="10"
+                Header=" Emission"
+                IsEnabled="{Binding IsConnected}"
+                Style="{DynamicResource GroupBoxTab}">
+                <ComboBox
+                    IsEnabled="{Binding IsEmissionEnable}"
+                    ItemsSource="{Binding EmissionCollection}"
+                    SelectedIndex="{Binding EmissionIndex}" />
+            </GroupBox>
+            <ToggleButton
+                liftui:StatusSwitchElement.HideUncheckedElement="False"
+                Focusable="False"
+                IsChecked="{Binding IsEmissionExtraction}"
                 IsEnabled="{Binding IsEmissionEnable}"
-                ItemsSource="{Binding EmissionCollection}"
-                SelectedIndex="{Binding EmissionIndex}" />
-        </GroupBox>
-        <GroupBox
-            Height="80"
-            Margin="10"
-            Header=" Excitation"
-            IsEnabled="{Binding IsConnected}"
-            Style="{DynamicResource GroupBoxTab}">
-            <ComboBox
+                Style="{DynamicResource ToggleButtonCustom}">
+                <liftui:StatusSwitchElement.CheckedElement>
+                    <Border
+                        Background="{DynamicResource PrimaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <Label
+                            Width="100"
+                            Background="Transparent"
+                            Content="Extraction"
+                            Foreground="White" />
+                    </Border>
+                </liftui:StatusSwitchElement.CheckedElement>
+                <Border
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <Label
+                        Width="100"
+                        Background="Transparent"
+                        Content="Extraction"
+                        Foreground="{DynamicResource PrimaryTextBrush}" />
+                </Border>
+            </ToggleButton>
+
+            <GroupBox
+                Height="80"
+                Margin="10"
+                Header=" Excitation"
+                IsEnabled="{Binding IsConnected}"
+                Style="{DynamicResource GroupBoxTab}">
+                <ComboBox
+                    IsEnabled="{Binding IsExcitationEnable}"
+                    ItemsSource="{Binding ExcitationCollection}"
+                    SelectedIndex="{Binding ExcitationIndex}" />
+            </GroupBox>
+            <ToggleButton
+                liftui:StatusSwitchElement.HideUncheckedElement="False"
+                Focusable="False"
+                IsChecked="{Binding IsExcitationExtraction}"
                 IsEnabled="{Binding IsExcitationEnable}"
-                ItemsSource="{Binding ExcitationCollection}"
-                SelectedIndex="{Binding ExcitationIndex}" />
-        </GroupBox>
+                Style="{DynamicResource ToggleButtonCustom}">
+                <liftui:StatusSwitchElement.CheckedElement>
+                    <Border
+                        Background="{DynamicResource PrimaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <Label
+                            Width="100"
+                            Background="Transparent"
+                            Content="Extraction"
+                            Foreground="White" />
+                    </Border>
+                </liftui:StatusSwitchElement.CheckedElement>
+                <Border
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <Label
+                        Width="100"
+                        Background="Transparent"
+                        Content="Extraction"
+                        Foreground="{DynamicResource PrimaryTextBrush}" />
+                </Border>
+            </ToggleButton>
+
+        </UniformGrid>
 
         <UniformGrid
             Margin="10,0"

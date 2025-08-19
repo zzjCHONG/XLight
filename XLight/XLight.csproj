@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Cecero.cs" />
+    <None Include="Cicero.cs" />
   </ItemGroup>
 
   <ItemGroup>
