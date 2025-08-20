@@ -86,7 +86,7 @@ namespace XLight.Wpf
 
             if (IsConnected)
             {
-               await InitSetting();
+                await InitSetting();
                 Application.Current?.Dispatcher.Invoke(async () =>
                 {
                     var ver = await _spin.Version;
@@ -218,7 +218,7 @@ namespace XLight.Wpf
             try
             {
                 IsControlEnable = false;
-            
+
                 if (!await _spin.SetSpining(value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -253,7 +253,7 @@ namespace XLight.Wpf
             try
             {
                 IsControlEnable = false;
-                if (!await _spin.SetDichroic(DichroicIndex+1, value))
+                if (!await _spin.SetDichroic(DichroicIndex + 1, value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -264,7 +264,7 @@ namespace XLight.Wpf
             }
             catch (Exception ex)
             {
-                Console.WriteLine("OnIsDichroicExtractionChanged Failed:"+ex.Message);
+                Console.WriteLine("OnIsDichroicExtractionChanged Failed:" + ex.Message);
             }
             finally
             {
@@ -313,7 +313,7 @@ namespace XLight.Wpf
             try
             {
                 IsControlEnable = false;
-                if (!await _spin.SetExcitation(ExcitationIndex+1, value))
+                if (!await _spin.SetExcitation(ExcitationIndex + 1, value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
@@ -376,7 +376,7 @@ namespace XLight.Wpf
 
                 IsDichroicExtraction = false;
                 IsEmissionExtraction = false;
-                IsExcitationExtraction= false;
+                IsExcitationExtraction = false;
 
                 IsControlEnable = false;
 

@@ -343,8 +343,6 @@ namespace XLightCicero
         {
             try
             {
-                if (value < 0 || value > 1) return false;
-
                 FlagN = value <= 1 ? value : 0;
                 var command = $"N{FlagN}";
                 var (ok, resp) = await SendCommandAsync(command, 10000);
@@ -374,8 +372,6 @@ namespace XLightCicero
         {
             try
             {
-                if (value < 1 || value > 5) return false;
-
                 var isExtractionMode = isExtraction ? "m" : "";
                 FlagB = value is >= 1 and <= 5 ? value : 1;
                 var command = $"B{FlagB}{isExtractionMode}";
@@ -544,64 +540,13 @@ namespace XLightCicero
             }
         }
 
-        public bool GetAllDevicesState(out Dictionary<char, int> states)
-        {
-            states = new Dictionary<char, int>();
-            try
-            {
-                var command = "q";
-                if (!SendCommand(command, out var resp)) return false;
-
-                // 去掉 CR LF
-                resp = resp.Trim('\r', '\n', ' ');
-
-                // 确保返回以 q 开头
-                if (!resp.StartsWith("q", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine($"[ERR] 返回格式错误: {resp}");
-                    return false;
-                }
-
-                // 解析 qB1C1D0N0A4 这种格式
-                // 每个设备格式固定：字母 + 数字
-                for (int i = 1; i < resp.Length - 1; i += 2)
-                {
-                    char deviceId = resp[i];
-                    if (i + 1 >= resp.Length) break;
-
-                    if (int.TryParse(resp[i + 1].ToString(), out int pos))
-                    {
-                        // 校验位置合法性
-                        if (IsValidPosition(deviceId, pos))
-                        {
-                            states[deviceId] = pos;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[WARN] 设备 {deviceId} 返回非法位置 {pos}");
-                            states[deviceId] = -1; // 标记非法
-                        }
-                    }
-                }
-
-                Console.WriteLine($"[OK] GetAllDevicesState: {string.Join(", ", states.Select(kv => $"{kv.Key}={kv.Value}"))}");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("[ERR] GetAllDevicesState Failed: " + e.Message);
-                return false;
-            }
-        }
-
-
         public async Task<(bool, int)> GetIndividualDeviceState(char deviceId)
         {
             try
             {
                 // 检查是否是有效设备 ID
                 deviceId = char.ToUpper(deviceId);
-                var validDevices = new[] {  'B', 'C', 'D', 'N' };
+                var validDevices = new[] { 'B', 'C', 'D', 'N' };
                 if (!validDevices.Contains(deviceId))
                 {
                     Console.WriteLine($"[ERR] 无效的设备ID: {deviceId}");

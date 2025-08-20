@@ -84,6 +84,7 @@ namespace XLight.Wpf
 
             if (IsConnected)
             {
+                await InitSetting();
                 Application.Current?.Dispatcher.Invoke(async () =>
                 {
                     var ver = await _spin.Version;
@@ -110,6 +111,7 @@ namespace XLight.Wpf
 
             if (IsConnected)
             {
+                await InitSetting();
                 currentPortname = com;
                 Application.Current?.Dispatcher.Invoke(async () =>
                 {
@@ -131,6 +133,15 @@ namespace XLight.Wpf
 
     partial class CiceroSpinViewModel
     {
+        async Task InitSetting()
+        {
+            await _spin.GetAllDevicesState();
+
+            await _spin.Reset();
+
+            await _spin.GetAllDevicesState();
+        }
+
         [ObservableProperty]
         private bool _isControlEnable = true;
 
@@ -220,7 +231,7 @@ namespace XLight.Wpf
             finally
             {
                 IsHoming = false;
-                IsControlEnable=true;
+                IsControlEnable = true;
             }
         }
 

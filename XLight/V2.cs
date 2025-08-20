@@ -100,7 +100,7 @@ namespace XLightV2
 
                     if (_dataReceivedEvent.Wait(_validTimeout))
                     {
-                        Console.WriteLine("未超时:"+_receivedDataforValid);
+                        Console.WriteLine("未超时:" + _receivedDataforValid);
                         if (!string.IsNullOrEmpty(_receivedDataforValid) && _receivedDataforValid.Contains("Crest"))
                         {
                             _portName = com;
@@ -143,7 +143,7 @@ namespace XLightV2
                     {
                         _dataReceivedEvent.Set(); // 通知有数据
                         break;
-                    }         
+                    }
                 }
             }
             catch (Exception ex)
@@ -441,7 +441,7 @@ namespace XLightV2
             }
         }
 
-        public async Task<bool> SetExcitation(uint value,bool isExtraction=false)
+        public async Task<bool> SetExcitation(uint value, bool isExtraction = false)
         {
             try
             {
@@ -472,7 +472,7 @@ namespace XLightV2
             try
             {
                 var command = "H";
-                var (ok, resp) = await SendCommandAsync(command,15000);
+                var (ok, resp) = await SendCommandAsync(command, 15000);
                 if (ok)
                 {
                     Console.WriteLine("[XXX] Home Success");
@@ -570,7 +570,7 @@ namespace XLightV2
 
                 Console.WriteLine($"[OK] GetAllDevicesState: {string.Join(", ", states.Select(kv => $"{kv.Key}={kv.Value}"))}");
 
-               
+
 
                 return states;
             }
@@ -587,7 +587,7 @@ namespace XLightV2
             {
                 // 检查是否是有效设备 ID
                 deviceId = char.ToUpper(deviceId);
-                var validDevices = new[] {'A', 'B', 'C', 'D', 'N' };
+                var validDevices = new[] { 'A', 'B', 'C', 'D', 'N' };
                 if (!validDevices.Contains(deviceId))
                 {
                     Console.WriteLine($"[ERR] 无效的设备ID: {deviceId}");
