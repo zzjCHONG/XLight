@@ -132,7 +132,7 @@ namespace XLight.Wpf
     partial class CiceroSpinViewModel
     {
         [ObservableProperty]
-        private bool _isEmissionEnable=true;
+        private bool _isControlEnable = true;
 
         public static List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", };
 
@@ -147,7 +147,7 @@ namespace XLight.Wpf
             if (IsHoming) return;
             try
             {
-                IsEmissionEnable = false;
+                IsControlEnable = false;
                 if (!await _spin.SetEmission(EmissionIndex + 1, IsEmissionExtraction))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -163,7 +163,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsEmissionEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -172,7 +172,7 @@ namespace XLight.Wpf
             if (IsHoming) return;
             try
             {
-                IsEmissionEnable = false;
+                IsControlEnable = false;
                 var pos = value + 1;
                 if (!await _spin.SetEmission(pos, IsEmissionExtraction))
                 {
@@ -189,7 +189,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsEmissionEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -205,6 +205,7 @@ namespace XLight.Wpf
             try
             {
                 IsHoming = true;
+                IsControlEnable = false;
 
                 EmissionIndex = 0;
                 IsSetSpin = false;
@@ -219,21 +220,19 @@ namespace XLight.Wpf
             finally
             {
                 IsHoming = false;
+                IsControlEnable=true;
             }
         }
 
         [ObservableProperty]
         private bool _isSetSpin;
 
-        [ObservableProperty]
-        private bool _isSetSpinEnable = true;
-
         [RelayCommand]
         async Task SetSpin()
         {
             try
             {
-                IsSetSpinEnable = false;
+                IsControlEnable = false;
 
                 await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
 
@@ -246,7 +245,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsSetSpinEnable = true;
+                IsControlEnable = true;
             }
         }
     }

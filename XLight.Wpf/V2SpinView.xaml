@@ -13,13 +13,15 @@
 
     <StackPanel>
 
-        <Button
-            Height="30"
-            Margin="20,0"
-            HorizontalAlignment="Stretch"
-            Command="{Binding HomeCommand}"
-            Content="复位"
-            IsEnabled="{Binding IsConnected}" />
+        <Grid IsEnabled="{Binding IsConnected}">
+            <Button
+                Height="30"
+                Margin="20,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding HomeCommand}"
+                Content="复位"
+                IsEnabled="{Binding IsControlEnable}" />
+        </Grid>
 
         <UniformGrid Columns="2" IsEnabled="{Binding IsConnected}">
 
@@ -30,7 +32,7 @@
                 IsEnabled="{Binding IsConnected}"
                 Style="{DynamicResource GroupBoxTab}">
                 <ComboBox
-                    IsEnabled="{Binding IsSpiningEnable}"
+                    IsEnabled="{Binding IsControlEnable}"
                     ItemsSource="{Binding SpiningCollection}"
                     SelectedIndex="{Binding SpiningIndex}" />
             </GroupBox>
@@ -39,7 +41,7 @@
                 Command="{Binding SetSpinCommand}"
                 Focusable="False"
                 IsChecked="{Binding IsSetSpin}"
-                IsEnabled="{Binding IsSetSpinEnable}"
+                IsEnabled="{Binding IsControlEnable}"
                 Style="{DynamicResource ToggleButtonCustom}">
                 <liftui:StatusSwitchElement.CheckedElement>
                     <Border
@@ -74,7 +76,7 @@
                 IsEnabled="{Binding IsConnected}"
                 Style="{DynamicResource GroupBoxTab}">
                 <ComboBox
-                    IsEnabled="{Binding IsDichroicEnable}"
+                    IsEnabled="{Binding IsControlEnable}"
                     ItemsSource="{Binding DichroicCollection}"
                     SelectedIndex="{Binding DichroicIndex}" />
             </GroupBox>
@@ -82,7 +84,7 @@
                 liftui:StatusSwitchElement.HideUncheckedElement="False"
                 Focusable="False"
                 IsChecked="{Binding IsDichroicExtraction}"
-                IsEnabled="{Binding IsDichroicEnable}"
+                IsEnabled="{Binding IsControlEnable}"
                 Style="{DynamicResource ToggleButtonCustom}">
                 <liftui:StatusSwitchElement.CheckedElement>
                     <Border
@@ -117,7 +119,7 @@
                 IsEnabled="{Binding IsConnected}"
                 Style="{DynamicResource GroupBoxTab}">
                 <ComboBox
-                    IsEnabled="{Binding IsEmissionEnable}"
+                    IsEnabled="{Binding IsControlEnable}"
                     ItemsSource="{Binding EmissionCollection}"
                     SelectedIndex="{Binding EmissionIndex}" />
             </GroupBox>
@@ -125,7 +127,7 @@
                 liftui:StatusSwitchElement.HideUncheckedElement="False"
                 Focusable="False"
                 IsChecked="{Binding IsEmissionExtraction}"
-                IsEnabled="{Binding IsEmissionEnable}"
+                IsEnabled="{Binding IsControlEnable}"
                 Style="{DynamicResource ToggleButtonCustom}">
                 <liftui:StatusSwitchElement.CheckedElement>
                     <Border
@@ -160,7 +162,7 @@
                 IsEnabled="{Binding IsConnected}"
                 Style="{DynamicResource GroupBoxTab}">
                 <ComboBox
-                    IsEnabled="{Binding IsExcitationEnable}"
+                    IsEnabled="{Binding IsControlEnable}"
                     ItemsSource="{Binding ExcitationCollection}"
                     SelectedIndex="{Binding ExcitationIndex}" />
             </GroupBox>
@@ -168,7 +170,7 @@
                 liftui:StatusSwitchElement.HideUncheckedElement="False"
                 Focusable="False"
                 IsChecked="{Binding IsExcitationExtraction}"
-                IsEnabled="{Binding IsExcitationEnable}"
+                IsEnabled="{Binding IsControlEnable}"
                 Style="{DynamicResource ToggleButtonCustom}">
                 <liftui:StatusSwitchElement.CheckedElement>
                     <Border

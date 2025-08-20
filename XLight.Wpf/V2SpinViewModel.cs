@@ -86,6 +86,7 @@ namespace XLight.Wpf
 
             if (IsConnected)
             {
+               await InitSetting();
                 Application.Current?.Dispatcher.Invoke(async () =>
                 {
                     var ver = await _spin.Version;
@@ -112,6 +113,7 @@ namespace XLight.Wpf
 
             if (IsConnected)
             {
+                await InitSetting();
                 currentPortname = com;
                 Application.Current?.Dispatcher.Invoke(async () =>
                 {
@@ -132,8 +134,57 @@ namespace XLight.Wpf
 
     partial class V2SpinViewModel
     {
+        async Task InitSetting()
+        {
+            await _spin.GetAllDevicesState();
+            await _spin.SetExcitation(ExcitationIndex, false);
+            await _spin.SetEmission(EmissionIndex, false);
+            await _spin.SetDichroic(DichroicIndex, false);
+            await _spin.SetSpining(SpiningIndex);
+            await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
+            await _spin.GetAllDevicesState();
+
+            ////可能出现任意位置处于维修位置的情况
+      
+            //var res = await _spin.GetAllDevicesState();
+            //foreach (var device in res)
+            //{
+            //    if (device.Key == 'A')
+            //    {
+            //        if (device.Value != ExcitationIndex + 1)
+            //            await _spin.SetExcitation(ExcitationIndex, false);
+            //        continue;
+            //    }
+            //    if (device.Key == 'B')
+            //    {
+            //        if (device.Value != EmissionIndex + 1)
+            //            await _spin.SetEmission(EmissionIndex, false);
+            //        continue;
+            //    }
+            //    if (device.Key == 'C')
+            //    {
+            //        if (device.Value != DichroicIndex + 1)
+            //            await _spin.SetDichroic(DichroicIndex, false);
+            //        continue;
+            //    }
+            //    if (device.Key == 'D')
+            //    {
+            //        if (device.Value != SpiningIndex)
+            //            await _spin.SetSpining(SpiningIndex);
+            //        continue;
+            //    }
+            //    if (device.Key == 'N')
+            //    {
+            //        if (Convert.ToBoolean(device.Value) != IsSetSpin)
+            //            await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
+            //        continue;
+            //    }
+            //}
+
+        }
+
         [ObservableProperty]
-        private bool _isEmissionEnable = true;
+        private bool _isControlEnable = true;
 
         public static List<string> EmissionCollection => new() { "1", "2", "3", "4", "5", "6", "7", "8" };
 
@@ -149,7 +200,7 @@ namespace XLight.Wpf
 
             try
             {
-                IsEmissionEnable = false;
+                IsControlEnable = false;
                 if (!await _spin.SetEmission(EmissionIndex + 1, value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -165,7 +216,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsEmissionEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -175,7 +226,7 @@ namespace XLight.Wpf
 
             try
             {
-                IsEmissionEnable = false;
+                IsControlEnable = false;
                 var pos = value + 1;
                 if (!await _spin.SetEmission(pos, IsEmissionExtraction))
                 {
@@ -192,12 +243,9 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsEmissionEnable = true;
+                IsControlEnable = true;
             }
         }
-
-        [ObservableProperty]
-        private bool _isSpiningEnable = true;
 
         public static List<string> SpiningCollection => new() { "0", "1", "2" };
 
@@ -209,8 +257,8 @@ namespace XLight.Wpf
             if (isHoming) return;
             try
             {
-                IsSpiningEnable = false;
-                IsSetSpinEnable = false;
+                IsControlEnable = false;
+            
                 if (!await _spin.SetSpining(value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -226,13 +274,9 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsSpiningEnable = true;
-                IsSetSpinEnable = true;
+                IsControlEnable = true;
             }
         }
-
-        [ObservableProperty]
-        private bool _isDichroicEnable = true;
 
         public static List<string> DichroicCollection => new() { "1", "2", "3", "4", "5" };
 
@@ -248,7 +292,7 @@ namespace XLight.Wpf
 
             try
             {
-                IsDichroicEnable = false;
+                IsControlEnable = false;
                 if (!await _spin.SetDichroic(DichroicIndex+1, value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -264,7 +308,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsDichroicEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -273,7 +317,7 @@ namespace XLight.Wpf
             if (isHoming) return;
             try
             {
-                IsDichroicEnable = false;
+                IsControlEnable = false;
                 var pos = value + 1;
                 if (!await _spin.SetDichroic(pos, IsDichroicExtraction))
                 {
@@ -290,13 +334,9 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsDichroicEnable = true;
+                IsControlEnable = true;
             }
-
         }
-
-        [ObservableProperty]
-        private bool _isExcitationEnable = true;
 
         public static List<string> ExcitationCollection => new() { "1", "2", "3", "4", "5", "6", "7", "8" };
 
@@ -312,7 +352,7 @@ namespace XLight.Wpf
 
             try
             {
-                IsExcitationEnable = false;
+                IsControlEnable = false;
                 if (!await _spin.SetExcitation(ExcitationIndex+1, value))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -328,7 +368,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsExcitationEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -337,7 +377,7 @@ namespace XLight.Wpf
             if (isHoming) return;
             try
             {
-                IsExcitationEnable = false;
+                IsControlEnable = false;
                 var pos = value + 1;
                 if (!await _spin.SetExcitation(pos, IsExcitationExtraction))
                 {
@@ -354,7 +394,7 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsExcitationEnable = true;
+                IsControlEnable = true;
             }
         }
 
@@ -376,7 +416,9 @@ namespace XLight.Wpf
 
                 IsDichroicExtraction = false;
                 IsEmissionExtraction = false;
-                IsExcitationExtraction = false;
+                IsExcitationExtraction= false;
+
+                IsControlEnable = false;
 
                 await _spin.Reset();
             }
@@ -387,22 +429,19 @@ namespace XLight.Wpf
             finally
             {
                 isHoming = false;
+                IsControlEnable = true;
             }
         }
 
         [ObservableProperty]
         private bool _isSetSpin;
 
-        [ObservableProperty]
-        private bool _isSetSpinEnable = true;
-
         [RelayCommand]
         async Task SetSpin()
         {
             try
             {
-                IsSetSpinEnable = false;
-                IsSpiningEnable = false;
+                IsControlEnable = false;
 
                 await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
 
@@ -415,11 +454,8 @@ namespace XLight.Wpf
             }
             finally
             {
-                IsSpiningEnable = true;
-                IsSetSpinEnable = true;
+                IsControlEnable = true;
             }
-
-
         }
     }
 }

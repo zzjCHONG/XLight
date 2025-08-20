@@ -1,4 +1,5 @@
-﻿namespace XLight
+﻿
+namespace XLight
 {
     public class V2CrestSpin : ISpin
     {
@@ -12,6 +13,8 @@
         public Task<string> Version => _v2.GetVersion();
 
         public bool DisInit() => _v2.DisConnect();
+
+        public Task<Dictionary<char, int>> GetAllDevicesState() =>_v2.GetAllDevicesState();
 
         public bool Init(string com = "") => _v2.OpenCom(com);
 

@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 using System.Text;
+using System.Threading;
 
 namespace XLightV2
 {
@@ -63,12 +64,17 @@ namespace XLightV2
 
                         if (_dataReceivedEvent.Wait(_validTimeout))
                         {
+                            Console.WriteLine("未超时:" + _receivedDataforValid);
                             if (!string.IsNullOrEmpty(_receivedDataforValid) && _receivedDataforValid.Contains("Crest"))
                             {
                                 _portName = portName;
                                 _serialPort.Close();
                                 break;
                             }
+                        }
+                        else
+                        {
+                            Console.WriteLine("超时:" + _validTimeout);
                         }
 
                         _serialPort.Close();
@@ -94,12 +100,17 @@ namespace XLightV2
 
                     if (_dataReceivedEvent.Wait(_validTimeout))
                     {
+                        Console.WriteLine("未超时:"+_receivedDataforValid);
                         if (!string.IsNullOrEmpty(_receivedDataforValid) && _receivedDataforValid.Contains("Crest"))
                         {
                             _portName = com;
                             _serialPort.Close();
                             return true;
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("超时:" + _validTimeout);
                     }
 
                     _serialPort.Close();
@@ -123,15 +134,21 @@ namespace XLightV2
             try
             {
                 string data = _serialPort!.ReadExisting();
+
                 if (!string.IsNullOrEmpty(data))
                 {
                     _receivedDataforValid += data;
-                    _dataReceivedEvent.Set(); // 通知有数据
+
+                    while (_receivedDataforValid.Contains('\r'))
+                    {
+                        _dataReceivedEvent.Set(); // 通知有数据
+                        break;
+                    }         
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SerialPort_DataReceived_" + ex.Message);
+                Console.WriteLine("SerialPort_DataReceived_Valid_" + ex.Message);
             }
         }
 
@@ -169,6 +186,7 @@ namespace XLightV2
         public void Dispose()
         {
             DisConnect();
+            _serialPort!.DataReceived -= SerialPort_DataReceived;
             _serialPort!.Dispose();
         }
 
@@ -436,6 +454,7 @@ namespace XLightV2
                     if (!CheckReturnMsg(command, resp)) return false;
 
                     Console.WriteLine("[XXX] SetExcitation Success");
+
                     return true;
                 }
 
@@ -489,11 +508,18 @@ namespace XLightV2
             }
         }
 
+        /// <summary>
+        /// 原厂返回有错误
+        /// A随B位置同步，而不是实际位置
+        /// </summary>
+        /// <returns></returns>
         public async Task<Dictionary<char, int>> GetAllDevicesState()
         {
             var states = new Dictionary<char, int>();
             try
             {
+                var ares = await GetIndividualDeviceState('a');
+
                 var command = "q";
                 var (ok, resp) = await SendCommandAsync(command);
                 if (!ok || string.IsNullOrWhiteSpace(resp))
@@ -524,7 +550,15 @@ namespace XLightV2
                         // 校验位置合法性
                         if (IsValidPosition(deviceId, pos))
                         {
-                            states[deviceId] = pos;
+                            if (deviceId == 'A')
+                            {
+                                states[deviceId] = ares.Item2;
+                            }
+                            else
+                            {
+                                states[deviceId] = pos;
+                            }
+
                         }
                         else
                         {
@@ -535,6 +569,9 @@ namespace XLightV2
                 }
 
                 Console.WriteLine($"[OK] GetAllDevicesState: {string.Join(", ", states.Select(kv => $"{kv.Key}={kv.Value}"))}");
+
+               
+
                 return states;
             }
             catch (Exception e)
@@ -651,6 +688,10 @@ namespace XLightV2
         private TaskCompletionSource<string>? _commandTcs;
         private string _receiveBuffer = string.Empty;
 
+        private string? _lastResponse;
+        private readonly object _syncRoot = new();
+        private readonly ManualResetEventSlim _waitHandle = new(false);
+
         private async Task<(bool, string)> SendCommandAsync(string command, int timeoutMs = 1500)
         {
             if (!_serialPort!.IsOpen)
@@ -692,11 +733,15 @@ namespace XLightV2
                 if (_receiveBuffer.Contains("\r"))
                 {
                     string fullResponse = _receiveBuffer.Trim('\r', '\n');
+                    _lastResponse = fullResponse;
+
                     _commandTcs?.TrySetResult(fullResponse);
+                    _waitHandle.Set();
 
                     // 清空缓冲以便下次
                     _receiveBuffer = string.Empty;
                 }
+
             }
             catch (Exception ex)
             {
@@ -704,6 +749,33 @@ namespace XLightV2
             }
         }
 
+        public bool SendCommand(string command, out string respond, int timeoutMs = 2000)
+        {
+            if (!_serialPort!.IsOpen)
+                throw new InvalidOperationException("串口未打开");
 
+            respond = string.Empty;
+            lock (_syncRoot)
+            {
+                _lastResponse = string.Empty;
+                _receiveBuffer = string.Empty;
+                _waitHandle.Reset();
+            }
+
+            Console.WriteLine($"[SEND] {command}");
+            _serialPort.Write(command);
+
+            if (_waitHandle.Wait(timeoutMs))
+            {
+                lock (_syncRoot)
+                    respond = _lastResponse;
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"[TIMEOUT] {command} 超时未收到返回");
+                return false;
+            }
+        }
     }
 }

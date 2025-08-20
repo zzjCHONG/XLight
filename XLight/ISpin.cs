@@ -90,5 +90,11 @@
         /// 版本号
         /// </summary>
         public Task<string> Version { get; }
+
+        /// <summary>
+        /// 获取所有设备的状态
+        /// </summary>
+        /// <returns></returns>
+        public Task<Dictionary<char, int>> GetAllDevicesState();
     }
 }

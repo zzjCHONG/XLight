@@ -123,15 +123,21 @@ namespace XLightCicero
             try
             {
                 string data = _serialPort!.ReadExisting();
+
                 if (!string.IsNullOrEmpty(data))
                 {
                     _receivedDataforValid += data;
-                    _dataReceivedEvent.Set(); // 通知有数据
+
+                    while (_receivedDataforValid.Contains('\r'))
+                    {
+                        _dataReceivedEvent.Set(); // 通知有数据
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SerialPort_DataReceived_" + ex.Message);
+                Console.WriteLine("SerialPort_DataReceived_Valid_" + ex.Message);
             }
         }
 
@@ -169,6 +175,7 @@ namespace XLightCicero
         public void Dispose()
         {
             DisConnect();
+            _serialPort!.DataReceived -= SerialPort_DataReceived;
             _serialPort!.Dispose();
         }
 
@@ -537,6 +544,57 @@ namespace XLightCicero
             }
         }
 
+        public bool GetAllDevicesState(out Dictionary<char, int> states)
+        {
+            states = new Dictionary<char, int>();
+            try
+            {
+                var command = "q";
+                if (!SendCommand(command, out var resp)) return false;
+
+                // 去掉 CR LF
+                resp = resp.Trim('\r', '\n', ' ');
+
+                // 确保返回以 q 开头
+                if (!resp.StartsWith("q", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"[ERR] 返回格式错误: {resp}");
+                    return false;
+                }
+
+                // 解析 qB1C1D0N0A4 这种格式
+                // 每个设备格式固定：字母 + 数字
+                for (int i = 1; i < resp.Length - 1; i += 2)
+                {
+                    char deviceId = resp[i];
+                    if (i + 1 >= resp.Length) break;
+
+                    if (int.TryParse(resp[i + 1].ToString(), out int pos))
+                    {
+                        // 校验位置合法性
+                        if (IsValidPosition(deviceId, pos))
+                        {
+                            states[deviceId] = pos;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[WARN] 设备 {deviceId} 返回非法位置 {pos}");
+                            states[deviceId] = -1; // 标记非法
+                        }
+                    }
+                }
+
+                Console.WriteLine($"[OK] GetAllDevicesState: {string.Join(", ", states.Select(kv => $"{kv.Key}={kv.Value}"))}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[ERR] GetAllDevicesState Failed: " + e.Message);
+                return false;
+            }
+        }
+
+
         public async Task<(bool, int)> GetIndividualDeviceState(char deviceId)
         {
             try
@@ -615,6 +673,10 @@ namespace XLightCicero
         private TaskCompletionSource<string>? _commandTcs;
         private string _receiveBuffer = string.Empty;
 
+        private string? _lastResponse;
+        private readonly object _syncRoot = new();
+        private readonly ManualResetEventSlim _waitHandle = new(false);
+
         private async Task<(bool, string)> SendCommandAsync(string command, int timeoutMs = 1500)
         {
             if (!_serialPort!.IsOpen)
@@ -641,6 +703,35 @@ namespace XLightCicero
             {
                 Console.WriteLine($"[TIMEOUT] {command} 超时未收到返回");
                 return (false, string.Empty);
+            }
+        }
+
+        public bool SendCommand(string command, out string respond, int timeoutMs = 2000)
+        {
+            if (!_serialPort!.IsOpen)
+                throw new InvalidOperationException("串口未打开");
+
+            respond = string.Empty;
+            lock (_syncRoot)
+            {
+                _lastResponse = string.Empty;
+                _receiveBuffer = string.Empty;
+                _waitHandle.Reset();
+            }
+
+            Console.WriteLine($"[SEND] {command}");
+            _serialPort.Write(command);
+
+            if (_waitHandle.Wait(timeoutMs))
+            {
+                lock (_syncRoot)
+                    respond = _lastResponse;
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"[TIMEOUT] {command} 超时未收到返回");
+                return false;
             }
         }
 
