@@ -137,50 +137,10 @@ namespace XLight.Wpf
         async Task InitSetting()
         {
             await _spin.GetAllDevicesState();
-            await _spin.SetExcitation(ExcitationIndex, false);
-            await _spin.SetEmission(EmissionIndex, false);
-            await _spin.SetDichroic(DichroicIndex, false);
-            await _spin.SetSpining(SpiningIndex);
-            await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
+
+            await _spin.Reset();
+
             await _spin.GetAllDevicesState();
-
-            ////可能出现任意位置处于维修位置的情况
-      
-            //var res = await _spin.GetAllDevicesState();
-            //foreach (var device in res)
-            //{
-            //    if (device.Key == 'A')
-            //    {
-            //        if (device.Value != ExcitationIndex + 1)
-            //            await _spin.SetExcitation(ExcitationIndex, false);
-            //        continue;
-            //    }
-            //    if (device.Key == 'B')
-            //    {
-            //        if (device.Value != EmissionIndex + 1)
-            //            await _spin.SetEmission(EmissionIndex, false);
-            //        continue;
-            //    }
-            //    if (device.Key == 'C')
-            //    {
-            //        if (device.Value != DichroicIndex + 1)
-            //            await _spin.SetDichroic(DichroicIndex, false);
-            //        continue;
-            //    }
-            //    if (device.Key == 'D')
-            //    {
-            //        if (device.Value != SpiningIndex)
-            //            await _spin.SetSpining(SpiningIndex);
-            //        continue;
-            //    }
-            //    if (device.Key == 'N')
-            //    {
-            //        if (Convert.ToBoolean(device.Value) != IsSetSpin)
-            //            await _spin.SetDisk(IsSetSpin ? (uint)1 : 0);
-            //        continue;
-            //    }
-            //}
-
         }
 
         [ObservableProperty]
